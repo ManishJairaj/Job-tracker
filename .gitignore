@@ -1,0 +1,22 @@
+# Python
+backend/venv/
+backend/.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Environment variables
+.env
+backend/.env
+frontend/.env
+
+# React
+frontend/node_modules/
+frontend/dist/
+
+# IDE and OS
+.vscode/
+.DS_Store
+
+# Alembic / database temporary files
+*.db
