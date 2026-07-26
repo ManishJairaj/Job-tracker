@@ -1,0 +1,149 @@
+# JobTrack — Build Plan (July 26 → Aug 31, 2026)
+
+Stack: React, FastAPI, PostgreSQL, SQLAlchemy, JWT, Docker
+Goal: Phase 1 (core) + Phase 2 (reminders/notifications/dashboard) fully deployed by end of August. Phase 3 (AI resume-match) deliberately excluded from this plan.
+
+Pace assumption: ~3–4 focused hours/day, 6 days/week. Adjust day counts if your actual bandwidth differs, but keep the phase order.
+
+---
+
+## Week 1 (Jul 27 – Aug 2): Foundation + Auth
+
+**Day 1 — Project setup**
+- Init GitHub repo, README skeleton
+- Backend: FastAPI project structure (`app/`, `routers/`, `models/`, `schemas/`, `core/`)
+- Frontend: React project (Vite), folder structure
+- Local Postgres running (Docker container is fine to start)
+- `.env` config for both sides, `.gitignore`
+
+**Day 2 — Database schema**
+- Design tables: `users`, `jobs` (company, role, status, applied_date, notes, resume_file_path, etc.), `status_history` (optional but good for analytics later)
+- Write SQLAlchemy models
+- Set up Alembic migrations, run first migration
+
+**Day 3–4 — JWT auth**
+- User model, password hashing (passlib/bcrypt)
+- Register endpoint
+- Login endpoint issuing JWT (access token; consider refresh token if time allows)
+- Auth dependency (`get_current_user`) to protect routes
+- Test all auth endpoints with pytest or manual (Postman/Thunder Client)
+
+**Day 5–6 — Job CRUD (backend)**
+- Create job entry
+- List jobs (paginated)
+- Get single job
+- Update job (status, notes, etc.)
+- Delete job
+- Write pytest tests for each endpoint
+
+**Day 7 — Buffer / catch-up**
+- Finish anything slipped from Day 1–6
+- Push to GitHub, write commit-by-commit if not already
+
+---
+
+## Week 2 (Aug 3 – Aug 9): Resume Upload + Search/Filters + Frontend Core
+
+**Day 1–2 — Resume upload (backend)**
+- File upload endpoint (validate file type/size)
+- Store file (local disk to start; note where you'd swap in S3 later)
+- Link file path to job entry
+- Endpoint to download/view uploaded resume
+
+**Day 3 — Search & filters (backend)**
+- Query params: status, company, date range, keyword search on role/company/notes
+- Ensure indexes on frequently filtered columns
+
+**Day 4–6 — Frontend: auth + job list**
+- Register/login pages, store JWT (httpOnly cookie or localStorage — decide and be consistent)
+- Protected routes (redirect to login if no token)
+- Job list view (table/cards), pagination
+- Add/edit job form (including resume upload)
+- Status update UI (dropdown or drag-style)
+
+**Day 7 — Buffer**
+- Wire up search/filter UI to backend
+- Fix integration bugs between frontend and backend
+
+---
+
+## Week 3 (Aug 10 – Aug 16): Reminders + Notifications (Phase 2 start)
+
+**Day 1–2 — Reminder logic (backend)**
+- Data model for reminders (interview date, follow-up-in-7-days rule)
+- Scheduled job to check for due reminders (APScheduler or Celery+Redis — pick APScheduler for simplicity given timeline)
+- Endpoint to list upcoming reminders for a user
+
+**Day 3–4 — Email notifications**
+- Pick provider (AWS SES fits your target stack, or start with SMTP via a free service like Mailtrap for dev)
+- Email templates (interview reminder, follow-up nudge)
+- Background task to send emails when reminders are due
+- Test end-to-end with a real inbox
+
+**Day 5–6 — Frontend: reminders UI**
+- Reminders/notifications panel (upcoming interviews, follow-ups due)
+- Settings toggle (enable/disable email notifications)
+
+**Day 7 — Buffer**
+- This week has the most moving parts (scheduler + email delivery). Use buffer day here specifically — don't borrow it forward.
+
+---
+
+## Week 4 (Aug 17 – Aug 23): Analytics Dashboard
+
+**Day 1–2 — Backend aggregation endpoints**
+- Applications over time (by week/month)
+- Status funnel (applied → interview → offer → rejected counts)
+- Response rate, average time-to-response
+
+**Day 3–4 — Frontend dashboard**
+- Charts (recharts fits your stack) for the above metrics
+- Summary cards (total applications, active, offers, etc.)
+
+**Day 5 — Polish core UX**
+- Empty states, loading states, error handling across the app
+- Basic responsive layout check
+
+**Day 6–7 — Buffer**
+- Catch up on any Week 3 or 4 slippage — this is your last full buffer before deployment week
+
+---
+
+## Week 5 (Aug 24 – Aug 31): Deployment + Polish
+
+**Day 1 — Dockerize**
+- Dockerfile for backend, Dockerfile for frontend (or serve build via backend/static)
+- `docker-compose.yml` (app + Postgres)
+
+**Day 2–3 — Deploy**
+- Backend + DB: AWS (EC2/RDS or ECS if you want the resume line) — Railway/Render as fallback if AWS eats too much time
+- Frontend: Vercel/Netlify, or same instance as backend
+- Environment variables, CORS config, HTTPS
+
+**Day 4 — Testing pass**
+- Full manual walkthrough: register → add job → upload resume → search/filter → get reminder → check dashboard
+- Fix any deployment-specific bugs (env vars, CORS, file storage paths)
+
+**Day 5 — README + documentation**
+- Setup instructions, architecture overview, screenshots
+- Note tech decisions (why JWT, why APScheduler, etc.) — useful for interview talking points
+
+**Day 6 — Demo prep**
+- Record a short walkthrough video/GIF for README
+- Clean up commit history if needed, tag a release
+
+**Day 7 — Final buffer**
+- Anything unfinished lands here. If you're on schedule, use this day to start scoping Phase 3 (AI resume-match) as a stretch goal.
+
+---
+
+## Cut-list if you fall behind (in order of what to drop first)
+1. Analytics dashboard charts — reduce to summary numbers only, skip recharts visuals
+2. Refresh tokens — access token only is fine for a portfolio project
+3. Follow-up reminder polish — keep interview reminders, simplify follow-up logic
+4. AWS deployment — fall back to Railway/Render, mention "AWS-ready" in README instead
+
+## What NOT to cut
+- JWT auth (core to your "learn the tools" goal)
+- Job CRUD + search/filters (the actual product)
+- Deployment (a project that only runs locally doesn't count as shipped)

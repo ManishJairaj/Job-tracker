@@ -1,0 +1,28 @@
+Phase 1 — Core: 6–8 days
+
+Setup (FastAPI + Postgres + JWT boilerplate, if not reused from job-scheduler): 1 day
+CRUD for applications + status update: 1–2 days
+Resume upload (S3/local + file validation): 1 day
+Notes: 0.5 day
+Search & filters (with indexing done right): 1–1.5 days
+Frontend (React) wiring for all of the above: 2 days (can overlap with backend work if you build API-first)
+
+Phase 2 — Automation: 5–7 days
+
+Celery + Redis setup (task queue, worker, broker config): 1–1.5 days — this eats time if you haven't used Celery before, budget for debugging
+Interview + 7-day follow-up reminder logic: 1 day
+Email notifications (SMTP/SendGrid integration): 1 day
+Analytics dashboard (aggregation queries + frontend charts): 1.5–2 days
+
+Phase 3 — Resume Match Score: 4–6 days
+
+Resume/JD chunking + embedding pipeline: 1–1.5 days
+pgvector setup + similarity search: 1 day
+Section-level scoring + keyword-gap extraction (spaCy NER): 1.5–2 days
+Frontend to display it well: 1 day
+
+Deploy + polish: 3–4 days
+
+Dockerize, docker-compose for local dev: 1 day
+pytest coverage for core endpoints: 1–1.5 days
+AWS deploy + basic CI (GitHub Actions): 1–1.5 days
