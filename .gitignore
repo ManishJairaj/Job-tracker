@@ -20,3 +20,5 @@ frontend/dist/
 
 # Alembic / database temporary files
 *.db
+
+DATABASE_URL=postgresql://postgres:0607@localhost:5432/jobtrack
