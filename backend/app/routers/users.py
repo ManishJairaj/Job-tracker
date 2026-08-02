@@ -1,4 +1,4 @@
-from ..core import security
+from ..core import security,oauth2
 from ..schemas import user as userSchema
 from ..models import user as userModel
 from ..database import get_db
@@ -11,7 +11,7 @@ router = APIRouter(
 )
 
 @router.post("/",status_code=status.HTTP_201_CREATED,response_model=userSchema.UserResponse)
-def create( user : userSchema.UserCreate , db : Session = Depends(get_db)):
+def create( user : userSchema.UserCreate , db : Session = Depends(get_db),current_user : int = Depends(oauth2.get_current_user)):
 
     formattedEmail = user.email.strip().lower()
     check_user = (db.query(userModel.User)
@@ -37,7 +37,7 @@ def create( user : userSchema.UserCreate , db : Session = Depends(get_db)):
     return new_user
 
 @router.get("/",status_code=status.HTTP_200_OK,response_model= list[userSchema.UserResponse])
-def read( db : Session = Depends(get_db)):
+def read( db : Session = Depends(get_db), current_user : int = Depends(oauth2.get_current_user)):
     posts = db.query(userModel.User).all()
     return posts
 
