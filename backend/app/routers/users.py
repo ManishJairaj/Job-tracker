@@ -11,7 +11,7 @@ router = APIRouter(
 )
 
 @router.post("/",status_code=status.HTTP_201_CREATED,response_model=userSchema.UserResponse)
-def create( user : userSchema.UserCreate , db : Session = Depends(get_db),current_user : int = Depends(oauth2.get_current_user)):
+def create( user : userSchema.UserCreate , db : Session = Depends(get_db)):
 
     formattedEmail = user.email.strip().lower()
     check_user = (db.query(userModel.User)
